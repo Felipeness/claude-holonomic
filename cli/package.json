@@ -12,7 +12,13 @@
     "@holon/blueprint-engine": "workspace:*",
     "@holon/runtime": "workspace:*",
     "@holon/graph-memory": "workspace:*",
-    "@holon/observability": "workspace:*"
+    "@holon/observability": "workspace:*",
+    "@holon/brain": "workspace:*",
+    "@holon/researcher": "workspace:*",
+    "@holon/architect": "workspace:*",
+    "@holon/builder": "workspace:*",
+    "@holon/guardian": "workspace:*",
+    "@holon/scholar": "workspace:*"
   },
   "scripts": {
     "build": "tsc -b",

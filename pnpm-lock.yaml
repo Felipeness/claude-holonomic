@@ -66,18 +66,36 @@ importers:
 
   cli:
     dependencies:
+      '@holon/architect':
+        specifier: workspace:*
+        version: link:../holons/architect
       '@holon/blueprint-engine':
         specifier: workspace:*
         version: link:../packages/blueprint-engine
+      '@holon/brain':
+        specifier: workspace:*
+        version: link:../holons/brain
+      '@holon/builder':
+        specifier: workspace:*
+        version: link:../holons/builder
       '@holon/graph-memory':
         specifier: workspace:*
         version: link:../packages/graph-memory
+      '@holon/guardian':
+        specifier: workspace:*
+        version: link:../holons/guardian
       '@holon/observability':
         specifier: workspace:*
         version: link:../packages/observability
+      '@holon/researcher':
+        specifier: workspace:*
+        version: link:../holons/researcher
       '@holon/runtime':
         specifier: workspace:*
         version: link:../packages/holon-runtime
+      '@holon/scholar':
+        specifier: workspace:*
+        version: link:../holons/scholar
       '@holon/shared':
         specifier: workspace:*
         version: link:../packages/shared

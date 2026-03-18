@@ -25,8 +25,15 @@ import type { ReviewResult } from "@holon/guardian"
 import { generateInsights, digestSession } from "@holon/scholar"
 import type { Insight, SessionDigest } from "@holon/scholar"
 
+import { researchWithClaude } from "../../holons/researcher/infra/claude-researcher.js"
+import { runClaudeAgent } from "../../holons/builder/infra/claude-agent.js"
+import type { AgentResult } from "../../holons/builder/infra/claude-agent.js"
+import type { ResearchResult as ClaudeResearchResult } from "../../holons/researcher/infra/claude-researcher.js"
+import { Effect } from "effect"
+
 export interface PipelineInput {
   readonly task: string
+  readonly cwd?: string
 }
 
 export interface PipelinePhaseResult {
@@ -36,8 +43,17 @@ export interface PipelinePhaseResult {
   readonly success: boolean
 }
 
+export interface LiveModeResult {
+  readonly researchOutput: string
+  readonly researchFilesExamined: readonly string[]
+  readonly agentOutput: string
+  readonly agentExitCode: number
+}
+
 export interface PipelineResult {
   readonly task: string
+  readonly mode: "demo" | "live"
+  readonly cwd?: string
   readonly classification: TaskClassification
   readonly holonSelection: HolonSelection
   readonly budget: BudgetAllocation
@@ -52,6 +68,7 @@ export interface PipelineResult {
   readonly phases: readonly PipelinePhaseResult[]
   readonly totalDurationMs: number
   readonly success: boolean
+  readonly live?: LiveModeResult
 }
 
 export type PipelinePhaseCallback = (phase: DfaState, holon: HolonName) => void
@@ -62,9 +79,19 @@ function timeMs(fn: () => void): number {
   return Date.now() - start
 }
 
-export function runPipeline(input: PipelineInput, onPhase?: PipelinePhaseCallback): PipelineResult {
+async function timeMsAsync(fn: () => Promise<void>): Promise<number> {
+  const start = Date.now()
+  await fn()
+  return Date.now() - start
+}
+
+export const isLiveMode = (input: PipelineInput): input is PipelineInput & { cwd: string } =>
+  input.cwd !== undefined && input.cwd !== ""
+
+export async function runPipeline(input: PipelineInput, onPhase?: PipelinePhaseCallback): Promise<PipelineResult> {
   const pipelineStart = Date.now()
   const phases: PipelinePhaseResult[] = []
+  const live = isLiveMode(input)
 
   const dfa = new BlueprintDfa(DFA_STATE.IDLE, {
     ...defaultContext,
@@ -99,36 +126,67 @@ export function runPipeline(input: PipelineInput, onPhase?: PipelinePhaseCallbac
   onPhase?.(DFA_STATE.RESEARCHING, HOLON_NAME.RESEARCHER)
 
   let research: ResearchResult
+  let liveResearchOutput = ""
+  let liveResearchFiles: string[] = []
 
-  const researchMs = timeMs(() => {
-    const queryTerms = input.task.toLowerCase().split(/\s+/)
-    const samplePaths = [
-      "src/index.ts",
-      "src/api/routes.ts",
-      "src/auth/middleware.ts",
-      "src/db/connection.ts",
-      "tests/integration.test.ts",
-    ]
+  if (live) {
+    const researchMs = await timeMsAsync(async () => {
+      const result = await Effect.runPromise(
+        researchWithClaude({
+          question: `Analyze the codebase structure for implementing: ${input.task}`,
+          codebasePath: input.cwd!,
+        })
+      )
+      liveResearchOutput = result.answer
+      liveResearchFiles = result.filesExamined
+      research = {
+        files: result.filesExamined.map((path) => ({
+          path,
+          relevance: scoreFileRelevance(path, input.task),
+          summary: "analyzed by claude",
+        })),
+        patterns: [`${classification!.type}-pattern`],
+        dependencies: [],
+      }
+    })
 
-    const files = samplePaths.map((path) => ({
-      path,
-      relevance: scoreFileRelevance(path, input.task),
-      summary: `relevant to: ${queryTerms.slice(0, 3).join(", ")}`,
-    }))
+    phases.push({
+      phase: DFA_STATE.RESEARCHING,
+      holon: HOLON_NAME.RESEARCHER,
+      durationMs: researchMs,
+      success: true,
+    })
+  } else {
+    const researchMs = timeMs(() => {
+      const queryTerms = input.task.toLowerCase().split(/\s+/)
+      const samplePaths = [
+        "src/index.ts",
+        "src/api/routes.ts",
+        "src/auth/middleware.ts",
+        "src/db/connection.ts",
+        "tests/integration.test.ts",
+      ]
 
-    research = {
-      files: files.filter((f) => f.relevance > 0),
-      patterns: [`${classification!.type}-pattern`],
-      dependencies: [],
-    }
-  })
+      const files = samplePaths.map((path) => ({
+        path,
+        relevance: scoreFileRelevance(path, input.task),
+        summary: `relevant to: ${queryTerms.slice(0, 3).join(", ")}`,
+      }))
 
-  phases.push({
-    phase: DFA_STATE.RESEARCHING,
-    holon: HOLON_NAME.RESEARCHER,
-    durationMs: researchMs,
-    success: true,
-  })
+      research = {
+        files: files.filter((f) => f.relevance > 0),
+        patterns: [`${classification!.type}-pattern`],
+        dependencies: [],
+      }
+    })
+
+    phases.push({
+      phase: DFA_STATE.RESEARCHING,
+      holon: HOLON_NAME.RESEARCHER,
+      durationMs: researchMs,
+      success: true,
+    })
+  }
 
   // Phase 3: PLANNING (Architect)
   dfa.updateContext({ planApproved: true })
@@ -177,24 +235,66 @@ export function runPipeline(input: PipelineInput, onPhase?: PipelinePhaseCallbac
   onPhase?.(DFA_STATE.BUILDING, HOLON_NAME.BUILDER)
 
   let buildResult: BuildResult
+  let liveAgentOutput = ""
+  let liveAgentExitCode = 0
 
-  const buildMs = timeMs(() => {
-    buildResult = {
-      filesCreated: [],
-      filesModified: research!.files.map((f) => f.path),
-      testsAdded: classification!.type === "test" ? 3 : 1,
-      errors: [],
-    }
-  })
+  if (live) {
+    let buildSuccess = true
+    const buildMs = await timeMsAsync(async () => {
+      const agentResult = await Effect.runPromise(
+        runClaudeAgent({
+          description: [
+            `Task: ${input.task}`,
+            "",
+            "Instructions:",
+            "1. Write failing test first (TDD RED)",
+            "2. Implement minimal code (GREEN)",
+            "3. Refactor (REFACTOR)",
+            "4. Commit with conventional commits",
+          ].join("\n"),
+          workingDir: input.cwd!,
+          allowedTools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"],
+          maxTurns: 30,
+        })
+      )
+      liveAgentOutput = agentResult.output
+      liveAgentExitCode = agentResult.exitCode
+      buildSuccess = agentResult.success
+      buildResult = {
+        filesCreated: [],
+        filesModified: research!.files.map((f) => f.path),
+        testsAdded: 1,
+        errors: agentResult.success ? [] : [agentResult.output.slice(0, 200)],
+      }
+    })
 
-  dfa.updateContext({ testsPass: true, buildErrors: 0 })
+    dfa.updateContext({ testsPass: buildSuccess, buildErrors: buildSuccess ? 0 : 1 })
 
-  phases.push({
-    phase: DFA_STATE.BUILDING,
-    holon: HOLON_NAME.BUILDER,
-    durationMs: buildMs,
-    success: true,
-  })
+    phases.push({
+      phase: DFA_STATE.BUILDING,
+      holon: HOLON_NAME.BUILDER,
+      durationMs: buildMs,
+      success: buildSuccess,
+    })
+  } else {
+    const buildMs = timeMs(() => {
+      buildResult = {
+        filesCreated: [],
+        filesModified: research!.files.map((f) => f.path),
+        testsAdded: classification!.type === "test" ? 3 : 1,
+        errors: [],
+      }
+    })
+
+    dfa.updateContext({ testsPass: true, buildErrors: 0 })
+
+    phases.push({
+      phase: DFA_STATE.BUILDING,
+      holon: HOLON_NAME.BUILDER,
+      durationMs: buildMs,
+      success: true,
+    })
+  }
 
   // Phase 5: REVIEWING (Guardian)
   dfa.transition(DFA_STATE.REVIEWING)
@@ -284,6 +384,8 @@ export function runPipeline(input: PipelineInput, onPhase?: PipelinePhaseCallbac
 
   return {
     task: input.task,
+    mode: live ? "live" : "demo",
+    cwd: input.cwd,
     classification: classification!,
     holonSelection: holonSelection!,
     budget: budget!,
@@ -298,5 +400,13 @@ export function runPipeline(input: PipelineInput, onPhase?: PipelinePhaseCallbac
     phases,
     totalDurationMs,
     success: phases.every((p) => p.success),
+    ...(live ? {
+      live: {
+        researchOutput: liveResearchOutput,
+        researchFilesExamined: liveResearchFiles,
+        agentOutput: liveAgentOutput,
+        agentExitCode: liveAgentExitCode,
+      },
+    } : {}),
   }
 }

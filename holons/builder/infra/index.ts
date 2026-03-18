@@ -5,3 +5,6 @@ export function createBuilderInfra() {
     async disconnect() {},
   }
 }
+
+export { runClaudeAgent, AgentError } from './claude-agent.js'
+export type { AgentTask, AgentResult } from './claude-agent.js'

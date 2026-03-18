@@ -1,0 +1,21 @@
+{
+  "name": "@holon/cli",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.tsx",
+  "bin": {
+    "claude-holonomic": "./dist/index.js"
+  },
+  "dependencies": {
+    "@holon/shared": "workspace:*",
+    "@holon/blueprint-engine": "workspace:*",
+    "@holon/runtime": "workspace:*",
+    "@holon/graph-memory": "workspace:*",
+    "@holon/observability": "workspace:*"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "dev": "tsx src/index.tsx"
+  }
+}

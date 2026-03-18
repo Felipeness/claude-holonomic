@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "."
+  },
+  "include": ["domain", "infra", "resilience"],
+  "references": [
+    { "path": "../../packages/shared" },
+    { "path": "../../packages/runtime" }
+  ]
+}

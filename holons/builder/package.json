@@ -1,0 +1,17 @@
+{
+  "name": "@holon/builder",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "domain/index.ts",
+  "exports": {
+    ".": "./domain/index.ts"
+  },
+  "dependencies": {
+    "@holon/shared": "workspace:*",
+    "@holon/runtime": "workspace:*"
+  },
+  "scripts": {
+    "build": "tsc -b"
+  }
+}

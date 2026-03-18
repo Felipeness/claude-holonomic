@@ -1,0 +1,44 @@
+{
+  "name": "claude-holonomic",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "claude-holonomic": "./cli/dist/index.js"
+  },
+  "scripts": {
+    "build": "pnpm -r run build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint . --ext .ts,.tsx",
+    "format": "prettier --write .",
+    "typecheck": "tsc -b"
+  },
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=9"
+  },
+  "dependencies": {
+    "@effect/platform": "^0.95.0",
+    "@effect/schema": "^0.75.5",
+    "@types/react": "^19.2.14",
+    "@vitest/coverage-v8": "^4.1.0",
+    "effect": "^3.20.0",
+    "ink": "^6.8.0",
+    "ink-testing-library": "^4.0.0",
+    "react": "^19.2.4",
+    "ts-pattern": "^5.9.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "@typescript-eslint/eslint-plugin": "^8.57.1",
+    "@typescript-eslint/parser": "^8.57.1",
+    "eslint": "^10.0.3",
+    "prettier": "^3.8.1",
+    "tsx": "^4.21.0"
+  }
+}

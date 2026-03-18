@@ -1,0 +1,18 @@
+{
+  "files": [],
+  "references": [
+    { "path": "packages/shared" },
+    { "path": "packages/graph-memory" },
+    { "path": "packages/blueprint-engine" },
+    { "path": "packages/holon-runtime" },
+    { "path": "packages/circuit-breaker" },
+    { "path": "packages/observability" },
+    { "path": "holons/brain" },
+    { "path": "holons/researcher" },
+    { "path": "holons/architect" },
+    { "path": "holons/builder" },
+    { "path": "holons/guardian" },
+    { "path": "holons/scholar" },
+    { "path": "cli" }
+  ]
+}

@@ -9,3 +9,8 @@ export type {
   GraphTraversal,
 } from "./types.js"
 export type { EventEnvelope } from "./event-store.js"
+
+export { PgClient, PgError } from "./pg-client.js"
+export { PgEventStore } from "./pg-event-store.js"
+export { PgGraphMemory } from "./pg-graph-memory.js"
+export { createGraphMemory, DEFAULT_PG_URL } from "./detect-storage.js"

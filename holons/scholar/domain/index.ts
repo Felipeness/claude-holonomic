@@ -41,3 +41,21 @@ export function mergeInsights(
     evidence: combined,
   }
 }
+
+export { digestSession, SESSION_EVENT_TYPE } from "./session-digester.js"
+export type { SessionEvent, SessionDigest, SessionEventType } from "./session-digester.js"
+
+export {
+  recordChoice,
+  createEmptyPreferenceState,
+  getTopPreferences,
+} from "./preference-learner.js"
+export type {
+  ApproachChoice,
+  PreferenceWeight,
+  PreferenceUpdate,
+  PreferenceState,
+} from "./preference-learner.js"
+
+export { generateInsights, INSIGHT_TYPE } from "./insight-generator.js"
+export type { Insight, InsightType, TaskOutcome } from "./insight-generator.js"

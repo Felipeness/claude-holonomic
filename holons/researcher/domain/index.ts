@@ -2,6 +2,45 @@ import { HOLON_NAME } from "@holon/shared"
 
 export const RESEARCHER_NAME = HOLON_NAME.RESEARCHER
 
+export type {
+  FileMetadata,
+  Dependency,
+  CodebaseMap,
+} from "./codebase-explorer.js"
+
+export {
+  extractImports,
+  buildFileMetadata,
+  buildDependencyGraph,
+  buildCodebaseMap,
+  scoreFileForTask,
+} from "./codebase-explorer.js"
+
+export type {
+  CommitInfo,
+  HotspotFile,
+  HistoryAnalysis,
+} from "./history-analyzer.js"
+
+export {
+  identifyHotspots,
+  buildHistoryAnalysis,
+  filterCommitsByPath,
+  recentCommitsWithinDays,
+} from "./history-analyzer.js"
+
+export type {
+  ScoredFile,
+  CuratedContext,
+  CuratedFile,
+} from "./context-curator.js"
+
+export {
+  estimateTokens,
+  truncateToTokenBudget,
+  curateContext,
+} from "./context-curator.js"
+
 export interface FileContext {
   readonly path: string
   readonly relevance: number

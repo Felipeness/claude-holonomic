@@ -30,3 +30,15 @@ export function isReviewApproved(result: ReviewResult): boolean {
   const hasBlockingIssues = result.issues.some((i) => i.severity === "error")
   return result.testsPass && result.typeCheckPass && !hasBlockingIssues
 }
+
+export { reviewCode, QUALITY_THRESHOLD_DEFAULT, REVIEW_RULE } from "./review-engine.js"
+export type { QualityScore, QualityFinding, ReviewRule } from "./review-engine.js"
+
+export { scanSecurity, SECURITY_RULE } from "./security-scanner.js"
+export type { SecurityFinding, SecurityRule } from "./security-scanner.js"
+
+export { analyzePerformance, PERF_RULE } from "./perf-analyzer.js"
+export type { PerfFinding, PerfRule } from "./perf-analyzer.js"
+
+export { composePr } from "./pr-composer.js"
+export type { PrInput, PrContent } from "./pr-composer.js"

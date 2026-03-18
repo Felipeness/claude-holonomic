@@ -1,6 +1,12 @@
+import { resolve } from "node:path"
 import { defineConfig } from "vitest/config"
 
 export default defineConfig({
+  oxc: {
+    tsconfig: {
+      configFile: resolve(import.meta.dirname, "tsconfig.base.json"),
+    },
+  },
   test: {
     globals: true,
     environment: "node",

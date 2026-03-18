@@ -114,6 +114,9 @@ importers:
       '@holon/shared':
         specifier: workspace:*
         version: link:../../packages/shared
+      ts-pattern:
+        specifier: ^5.9.0
+        version: 5.9.0
 
   holons/guardian:
     dependencies:

@@ -4,9 +4,9 @@
     "outDir": "dist",
     "rootDir": "."
   },
-  "include": ["domain", "infra", "resilience"],
+  "include": ["domain", "infra", "resilience", "__tests__"],
   "references": [
     { "path": "../../packages/shared" },
-    { "path": "../../packages/runtime" }
+    { "path": "../../packages/holon-runtime" }
   ]
 }

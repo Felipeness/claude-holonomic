@@ -5,13 +5,13 @@
 [![Effect-TS](https://img.shields.io/badge/Effect--TS-v3-purple)]()
 [![License](https://img.shields.io/badge/license-MIT-green)]()
 
-## O que e isso? / What is this?
+## O que é isso? / What is this?
 
-O claude-holonomic e como ter um time de engenheiros seniores dentro do seu terminal. Quando voce diz "adicionar rate limiting na API de pagamentos", ele nao apenas escreve o codigo — ele pesquisa a documentacao atualizada, planeja 2-3 abordagens com trade-offs, implementa com TDD (escrevendo testes antes do codigo), revisa a qualidade e a seguranca, e ainda aprende suas preferencias para ser melhor na proxima vez.
+O claude-holonomic é como ter um time de engenheiros seniores dentro do seu terminal. Quando você diz "adicionar rate limiting na API de pagamentos", ele não apenas escreve o código — ele pesquisa a documentação atualizada, planeja 2-3 abordagens com trade-offs, implementa com TDD (escrevendo testes antes do código), revisa a qualidade e a segurança, e ainda aprende suas preferências para ser melhor na próxima vez.
 
-E um meta-framework construido sobre o Claude Agent SDK que organiza 6 agentes especializados (pesquisador, arquiteto, construtor, guardiao, scholar) coordenados por um cerebro central via maquina de estados. Cada agente opera de forma autonoma mas integrada — a filosofia holonomica na pratica.
+É um meta-framework construído sobre o Claude Agent SDK que organiza 6 agentes especializados (pesquisador, arquiteto, construtor, guardião, scholar) coordenados por um cérebro central via máquina de estados. Cada agente opera de forma autônoma mas integrada — a filosofia holonômica na prática.
 
-A diferenca? Ele fica mais inteligente a cada uso. A memoria em grafo aprende quais padroes voce prefere, quais abordagens funcionam melhor no seu codebase, e quais erros evitar.
+A diferença? Ele fica mais inteligente a cada uso. A memória em grafo aprende quais padrões você prefere, quais abordagens funcionam melhor no seu codebase, e quais erros evitar.
 
 ---
 
@@ -25,7 +25,7 @@ The difference? It gets smarter with every use. The graph memory learns which pa
 
 ## O problema que resolve / The problem it solves
 
-Ferramentas de IA para codigo sao boas em tarefas isoladas, mas nao aprendem com o tempo e nao seguem um processo estruturado. O claude-holonomic resolve isso com um pipeline de 6 especialistas que seguem fases deterministicas (pesquisa -> planejamento -> implementacao -> revisao -> aprendizado) e acumulam conhecimento via memoria em grafo.
+Ferramentas de IA para código são boas em tarefas isoladas, mas não aprendem com o tempo e não seguem um processo estruturado. O claude-holonomic resolve isso com um pipeline de 6 especialistas que seguem fases determinísticas (pesquisa → planejamento → implementação → revisão → aprendizado) e acumulam conhecimento via memória em grafo.
 
 AI coding tools are good at isolated tasks, but they don't learn over time and don't follow a structured process. claude-holonomic solves this with a pipeline of 6 specialists that follow deterministic phases (research -> planning -> implementation -> review -> learning) and accumulate knowledge via graph memory.
 

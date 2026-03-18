@@ -4,7 +4,7 @@
     "outDir": "dist",
     "rootDir": "."
   },
-  "include": ["domain", "api", "infra", "resilience"],
+  "include": ["domain", "api", "infra", "resilience", "__tests__"],
   "references": [
     { "path": "../../packages/shared" },
     { "path": "../../packages/blueprint-engine" },

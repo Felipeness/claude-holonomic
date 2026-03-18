@@ -30,14 +30,14 @@ export function createInitialBrainState(): BrainState {
   }
 }
 
-export function classifyIntent(description: string): TaskType {
-  const lower = description.toLowerCase()
-  if (lower.includes("fix") || lower.includes("bug")) return "bug"
-  if (lower.includes("refactor")) return "refactor"
-  if (lower.includes("review") || lower.includes("pr")) return "review"
-  if (lower.includes("doc")) return "docs"
-  if (lower.includes("test")) return "test"
-  if (lower.includes("perf") || lower.includes("optimiz")) return "perf"
-  if (lower.includes("migrat")) return "migration"
-  return "feature"
-}
+export { classifyTask, COMPLEXITY, RISK } from "./task-classifier.js"
+export type { TaskClassification, Complexity, Risk } from "./task-classifier.js"
+
+export { selectHolons } from "./holon-selector.js"
+export type { HolonSelection } from "./holon-selector.js"
+
+export { allocateBudget, totalAllocatedPercentage, totalAllocatedTokens } from "./context-budget.js"
+export type { BudgetAllocation, HolonBudget } from "./context-budget.js"
+
+export { holonForState, decideNextStep, advanceRouter, createRouter } from "./dfa-router.js"
+export type { RouterDecision } from "./dfa-router.js"

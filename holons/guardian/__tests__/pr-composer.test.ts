@@ -86,9 +86,16 @@ describe("composePr", () => {
       description: "Add auth",
       filesChanged: ["src/auth.ts"],
       jiraTicket: "CC-5678",
+      jiraBaseUrl: "https://example.atlassian.net",
     })
 
-    expect(result.body).toContain("https://superlogica.atlassian.net/browse/CC-5678")
+    expect(result.body).toContain("https://example.atlassian.net/browse/CC-5678")
+  })
+
+  it("body shows N/A when Jira base url missing", () => {
+    const result = composePr({ taskType: "feature", description: "Add auth", filesChanged: [], jiraTicket: "CC-5678" })
+
+    expect(result.body).toContain("Jira: N/A")
   })
 
   it("body shows N/A when no Jira ticket", () => {

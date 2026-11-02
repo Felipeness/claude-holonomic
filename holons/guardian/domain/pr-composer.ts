@@ -5,6 +5,7 @@ export interface PrInput {
   readonly description: string
   readonly filesChanged: readonly string[]
   readonly jiraTicket?: string
+  readonly jiraBaseUrl?: string
   readonly testsSummary?: string
 }
 
@@ -64,8 +65,8 @@ function buildBody(input: PrInput): string {
   sections.push(input.testsSummary ?? "- [ ] Unit tests added")
   sections.push("")
 
-  const jiraUrl = input.jiraTicket
-    ? `https://superlogica.atlassian.net/browse/${input.jiraTicket}`
+  const jiraUrl = input.jiraTicket && input.jiraBaseUrl
+    ? `${input.jiraBaseUrl}/browse/${input.jiraTicket}`
     : "N/A"
   sections.push(`Jira: ${jiraUrl}`)
 
